@@ -81,11 +81,17 @@ export default function App() {
     })
   }, [])
 
+  // Two-step reset: the first click arms it, the second erases the save.
+  const [confirmReset, setConfirmReset] = useState(false)
   const resetAll = () => {
-    if (window.confirm('Erase all progress, including rebirths?')) {
-      setState(initialState)
-      saveState(initialState)
+    if (!confirmReset) {
+      setConfirmReset(true)
+      setTimeout(() => setConfirmReset(false), 4000)
+      return
     }
+    setConfirmReset(false)
+    setState(initialState)
+    saveState(initialState)
   }
 
   return (
@@ -123,7 +129,7 @@ export default function App() {
           onClick={resetAll}
           className="mx-auto text-xs text-stone-400 underline hover:text-stone-600 lg:col-span-2"
         >
-          Reset save
+          {confirmReset ? 'Click again to erase everything, including rebirths' : 'Reset save'}
         </button>
       </main>
     </div>
