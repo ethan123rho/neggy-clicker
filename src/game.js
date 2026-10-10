@@ -5,19 +5,26 @@ export const NEGGY_FALLBACK = '/neggy-placeholder.svg'
 
 export const SAVE_KEY = 'neggy-clicker-save-v1'
 
-export const BASE_CLICK = 1
+export const BASE_CLICK = 2
 export const REBIRTH_BASE_CLICKS = 100
 export const COST_GROWTH = 1.15
 
-// type "click" adds to Neggys per click, type "auto" adds to Neggys per second.
+// type "click" adds to Neggys per click, "auto" adds to Neggys per second,
+// and "multiplier" doubles every click once per purchase (stacking).
+// baseCost is the price of the first purchase; each purchase raises it by COST_GROWTH.
 export const SHOP_ITEMS = [
-  { id: 'candy', name: 'Candy Corn', emoji: '🍬', type: 'click', amount: 1, baseCost: 15 },
-  { id: 'bat', name: 'Friendly Bat', emoji: '🦇', type: 'auto', amount: 1, baseCost: 25 },
-  { id: 'ghost', name: 'Ghost Helper', emoji: '👻', type: 'auto', amount: 5, baseCost: 150 },
-  { id: 'pumpkin', name: 'Magic Pumpkin', emoji: '🎃', type: 'click', amount: 5, baseCost: 400 },
-  { id: 'cauldron', name: 'Bubbling Cauldron', emoji: '🧪', type: 'auto', amount: 25, baseCost: 1500 },
-  { id: 'vampire', name: 'Vampire Butler', emoji: '🧛', type: 'auto', amount: 100, baseCost: 8000 },
-  { id: 'moon', name: 'Haunted Moon', emoji: '🌕', type: 'click', amount: 50, baseCost: 25000 },
+  { id: 'nathaniel', name: 'Nathaniel', emoji: '🧑', image: '/nathaniel.png', type: 'auto', amount: 1, baseCost: 100, desc: 'Produces 1 Neggy / sec' },
+  { id: 'candy', name: 'Neggy Candy Corn', emoji: '🍬', type: 'click', amount: 5, baseCost: 150, desc: '+5 Neggy every click' },
+  { id: 'farm', name: 'Neggy Farm', emoji: '🌽', type: 'auto', amount: 5, baseCost: 500, desc: 'Produces 5 Neggy / sec' },
+  { id: 'ghost', name: 'Neggy Ghost', emoji: '👻', type: 'click', amount: 50, baseCost: 1200, desc: 'Boo! +50 Neggy every click' },
+  { id: 'factory', name: 'Neggy Factory', emoji: '🏭', type: 'click', amount: 100, baseCost: 2000, desc: '+100 Neggy every click' },
+  { id: 'brew', name: 'Neggy Brew', emoji: '🧪', type: 'auto', amount: 80, baseCost: 9000, desc: 'Magical auto-clicking potion. +80 Neggy / sec' },
+  { id: 'mine', name: 'Neggy Mine', emoji: '⛏️', type: 'auto', amount: 50, baseCost: 20000, desc: 'Produces 50 Neggy / sec' },
+  { id: 'temple', name: 'Neggy Temple', emoji: '🏛️', type: 'auto', amount: 200, baseCost: 100000, desc: 'Produces 200 Neggy / sec' },
+  { id: 'skeleton', name: 'Neggy Skeleton Crew', emoji: '💀', type: 'auto', amount: 600, baseCost: 110000, desc: 'A boney brigade of clickers. +600 Neggy / sec' },
+  { id: 'golden', name: 'Golden Neggy', emoji: '🌟', type: 'multiplier', amount: 2, baseCost: 120000, desc: 'Doubles ALL clicks (stacks each purchase)' },
+  { id: 'portal', name: 'Neggy Portal', emoji: '🌀', type: 'auto', amount: 1000, baseCost: 600000, desc: 'Produces 1,000 Neggy / sec' },
+  { id: 'pumpkin', name: 'Neggy Pumpkin Patch', emoji: '🎃', type: 'auto', amount: 3000, baseCost: 1000000, desc: 'Endless haunted harvest. +3,000 Neggy / sec' },
 ]
 
 export const initialState = {
@@ -41,7 +48,11 @@ export function perClick(state) {
     (sum, i) => sum + i.amount * (state.owned[i.id] || 0),
     0,
   )
-  return (BASE_CLICK + bonus) * rebirthMultiplier(state)
+  const golden = SHOP_ITEMS.filter((i) => i.type === 'multiplier').reduce(
+    (m, i) => m * Math.pow(i.amount, state.owned[i.id] || 0),
+    1,
+  )
+  return (BASE_CLICK + bonus) * golden * rebirthMultiplier(state)
 }
 
 export function perSecond(state) {
@@ -83,5 +94,5 @@ export function formatNumber(n) {
     x /= 1000
     i++
   }
-  return `${x.toFixed(x < 10 ? 2 : x < 100 ? 1 : 0)}${units[i]}`
+  return `${parseFloat(x.toFixed(x < 10 ? 2 : x < 100 ? 1 : 0))}${units[i]}`
 }

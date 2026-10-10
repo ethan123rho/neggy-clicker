@@ -101,16 +101,27 @@ export default function App() {
         </span>
       ))}
 
-      <main className="relative mx-auto flex max-w-3xl flex-col gap-6 px-4 py-8">
-        <h1 className="text-4xl font-extrabold tracking-tight text-amber-950">Neggy Clicker</h1>
-        <Counter state={state} />
-        <Neggy perClick={perClick(state)} onClick={handleClick} />
-        <RebirthMachine state={state} onRebirth={rebirth} />
-        <h2 className="text-center text-3xl font-extrabold text-orange-600">🎃 Happy Halloween 🎃</h2>
+      <p
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-[22rem] -translate-x-1/2 -rotate-12 select-none whitespace-nowrap text-center text-7xl font-black leading-none text-orange-400/30 sm:text-9xl"
+      >
+        HAPPY
+        <br />
+        HALLOWEEN
+      </p>
+
+      <main className="relative mx-auto grid max-w-6xl gap-6 px-4 py-8 lg:grid-cols-2 lg:items-start">
+        <div className="flex flex-col gap-6">
+          <h1 className="text-4xl font-extrabold tracking-tight text-amber-950">Neggy Clicker</h1>
+          <Counter state={state} />
+          <Neggy perClick={perClick(state)} onClick={handleClick} />
+          <RebirthMachine state={state} onRebirth={rebirth} />
+          <h2 className="text-center text-3xl font-extrabold text-orange-600">🎃 Happy Halloween 🎃</h2>
+        </div>
         <Shop state={state} onBuy={buy} />
         <button
           onClick={resetAll}
-          className="mx-auto text-xs text-stone-400 underline hover:text-stone-600"
+          className="mx-auto text-xs text-stone-400 underline hover:text-stone-600 lg:col-span-2"
         >
           Reset save
         </button>
@@ -169,16 +180,18 @@ function Neggy({ perClick, onClick }) {
           pressed ? 'scale-95' : 'hover:scale-105'
         }`}
       >
-        <img
-          src={NEGGY_IMAGE}
-          onError={(e) => {
-            e.currentTarget.onerror = null
-            e.currentTarget.src = NEGGY_FALLBACK
-          }}
-          alt="Neggy"
-          draggable={false}
-          className="h-full w-full rounded-full object-cover"
-        />
+        <span className="block h-full w-full overflow-hidden rounded-full">
+          <img
+            src={NEGGY_IMAGE}
+            onError={(e) => {
+              e.currentTarget.onerror = null
+              e.currentTarget.src = NEGGY_FALLBACK
+            }}
+            alt="Neggy"
+            draggable={false}
+            className="h-full w-full origin-[50%_25%] scale-[1.7] object-cover"
+          />
+        </span>
         {pops.map((p) => (
           <span
             key={p.id}
@@ -251,16 +264,19 @@ function Shop({ state, onBuy }) {
                 disabled={!affordable}
                 className="flex w-full items-center gap-3 rounded-xl border border-amber-100 bg-amber-50/60 p-3 text-left transition enabled:hover:border-amber-300 enabled:hover:bg-amber-100 disabled:opacity-50"
               >
-                <span className="text-3xl">{item.emoji}</span>
+                <ItemIcon item={item} />
                 <span className="flex-1">
                   <span className="block font-semibold">{item.name}</span>
-                  <span className="block text-sm text-stone-600">
-                    +{formatNumber(item.amount)} {item.type === 'click' ? 'per click' : 'per second'}
-                  </span>
+                  <span className="block text-sm text-stone-600">{item.desc}</span>
                 </span>
-                <span className="text-right">
+                {owned > 0 && (
+                  <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">
+                    ×{owned}
+                  </span>
+                )}
+                <span className="w-16 text-right">
                   <span className="block font-bold text-amber-700">{formatNumber(cost)}</span>
-                  <span className="block text-xs text-stone-500">owned {owned}</span>
+                  <span className="block text-[10px] uppercase tracking-wide text-stone-500">Neggy</span>
                 </span>
               </button>
             </li>
@@ -269,4 +285,19 @@ function Shop({ state, onBuy }) {
       </ul>
     </section>
   )
+}
+
+function ItemIcon({ item }) {
+  const [broken, setBroken] = useState(false)
+  if (item.image && !broken) {
+    return (
+      <img
+        src={item.image}
+        alt=""
+        onError={() => setBroken(true)}
+        className="h-10 w-10 rounded-full object-cover"
+      />
+    )
+  }
+  return <span className="w-10 text-center text-3xl">{item.emoji}</span>
 }
