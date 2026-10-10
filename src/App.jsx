@@ -15,6 +15,9 @@ import {
   rebirthMultiplier,
   saveState,
 } from './game.js'
+import { cloudEnabled } from './cloud.js'
+import { useCloudSave } from './useCloudSave.js'
+import { AccountPanel, Leaderboard } from './CloudPanels.jsx'
 
 const TICK_MS = 100
 
@@ -31,6 +34,7 @@ export default function App() {
   const [state, setState] = useState(loadState)
   const stateRef = useRef(state)
   stateRef.current = state
+  const cloud = useCloudSave(state, setState)
 
   // Passive income.
   useEffect(() => {
@@ -125,8 +129,19 @@ export default function App() {
           <Neggy perClick={perClick(state)} onClick={handleClick} />
           <RebirthMachine state={state} onRebirth={rebirth} />
           <h2 className="text-center text-3xl font-extrabold text-orange-600">🎃 Happy Halloween 🎃</h2>
+          {cloudEnabled && <Leaderboard session={cloud.session} />}
         </div>
-        <Shop state={state} onBuy={buy} />
+        <div className="flex flex-col gap-6">
+          {cloudEnabled && (
+            <AccountPanel
+              session={cloud.session}
+              status={cloud.status}
+              flush={cloud.flush}
+              onSignedOut={cloud.handleSignedOut}
+            />
+          )}
+          <Shop state={state} onBuy={buy} />
+        </div>
         <button
           onClick={resetAll}
           className="mx-auto text-xs text-stone-400 underline hover:text-stone-600 lg:col-span-2"
