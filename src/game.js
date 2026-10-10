@@ -13,7 +13,7 @@ export const COST_GROWTH = 1.15
 // and "multiplier" doubles every click once per purchase (stacking).
 // baseCost is the price of the first purchase; each purchase raises it by COST_GROWTH.
 export const SHOP_ITEMS = [
-  { id: 'nathaniel', name: 'Nathaniel', emoji: '🧑', image: '/nathaniel.png', type: 'auto', amount: 1, baseCost: 100, desc: 'Produces 1 Neggy / sec' },
+  { id: 'nathaniel', name: 'Nathaniel', emoji: '🧑', image: '/nathaniel.png', type: 'auto', amount: 1, baseCost: 20, desc: 'Produces 1 Neggy / sec' },
   { id: 'candy', name: 'Neggy Candy Corn', emoji: '🍬', type: 'click', amount: 5, baseCost: 150, desc: '+5 Neggy every click' },
   { id: 'farm', name: 'Neggy Farm', emoji: '🌽', type: 'auto', amount: 5, baseCost: 500, desc: 'Produces 5 Neggy / sec' },
   { id: 'ghost', name: 'Neggy Ghost', emoji: '👻', type: 'click', amount: 50, baseCost: 1200, desc: 'Boo! +50 Neggy every click' },
