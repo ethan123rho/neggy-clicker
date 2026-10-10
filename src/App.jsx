@@ -62,7 +62,6 @@ export default function App() {
         ...s,
         neggys: s.neggys + gain,
         totalNeggys: s.totalNeggys + gain,
-        rebirthClicks: s.rebirthClicks + 1,
       }
     })
   }, [])
@@ -78,7 +77,7 @@ export default function App() {
 
   const rebirth = useCallback(() => {
     setState((s) => {
-      if (s.rebirthClicks < rebirthGoal(s)) return s
+      if (s.neggys < rebirthGoal(s)) return s
       return { ...initialState, totalNeggys: s.totalNeggys, rebirths: s.rebirths + 1 }
     })
   }, [])
@@ -217,8 +216,8 @@ function Neggy({ perClick, onClick }) {
 
 function RebirthMachine({ state, onRebirth }) {
   const goal = rebirthGoal(state)
-  const clicks = Math.min(state.rebirthClicks, goal)
-  const ready = state.rebirthClicks >= goal
+  const have = Math.min(state.neggys, goal)
+  const ready = state.neggys >= goal
 
   return (
     <section className="rounded-2xl border border-purple-200 bg-white/80 p-5 shadow-sm">
@@ -235,14 +234,14 @@ function RebirthMachine({ state, onRebirth }) {
       </p>
       <div className="mt-3 flex justify-between text-sm text-stone-700">
         <span>
-          {clicks} / {goal} clicks
+          {formatNumber(have)} / {formatNumber(goal)} Neggys
         </span>
-        <span>{ready ? 'Ready!' : `${goal - clicks} to go`}</span>
+        <span>{ready ? 'Ready!' : `${formatNumber(goal - have)} to go`}</span>
       </div>
       <div className="mt-1 h-2.5 overflow-hidden rounded-full bg-purple-100">
         <div
           className="h-full rounded-full bg-gradient-to-r from-fuchsia-500 to-purple-500 transition-[width] duration-200"
-          style={{ width: `${(clicks / goal) * 100}%` }}
+          style={{ width: `${(have / goal) * 100}%` }}
         />
       </div>
       <button
@@ -250,7 +249,7 @@ function RebirthMachine({ state, onRebirth }) {
         disabled={!ready}
         className="mt-4 w-full rounded-xl py-3 font-semibold transition enabled:bg-gradient-to-r enabled:from-fuchsia-500 enabled:to-purple-600 enabled:text-white enabled:hover:brightness-110 disabled:bg-stone-100 disabled:text-stone-400"
       >
-        {ready ? `Rebirth for ×${rebirthMultiplier(state) + 1} clicks` : `Need ${goal} clicks`}
+        {ready ? `Rebirth for ×${rebirthMultiplier(state) + 1} clicks` : `Need ${formatNumber(goal)} Neggys`}
       </button>
     </section>
   )

@@ -6,7 +6,8 @@ export const NEGGY_FALLBACK = '/neggy-placeholder.svg'
 export const SAVE_KEY = 'neggy-clicker-save-v1'
 
 export const BASE_CLICK = 2
-export const REBIRTH_BASE_CLICKS = 100
+export const REBIRTH_BASE_NEGGYS = 10000
+export const REBIRTH_GROWTH = 5
 export const COST_GROWTH = 1.15
 
 // type "click" adds to Neggys per click, "auto" adds to Neggys per second.
@@ -30,7 +31,6 @@ export const initialState = {
   totalNeggys: 0,
   owned: {},
   rebirths: 0,
-  rebirthClicks: 0,
 }
 
 export function itemCost(item, owned) {
@@ -65,8 +65,9 @@ export function perSecond(state) {
   )
 }
 
+// Neggys you must be holding to rebirth: 10K, then 50K, 250K, 1.25M, ...
 export function rebirthGoal(state) {
-  return REBIRTH_BASE_CLICKS * (state.rebirths + 1)
+  return REBIRTH_BASE_NEGGYS * Math.pow(REBIRTH_GROWTH, state.rebirths)
 }
 
 export function loadState() {
