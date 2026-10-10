@@ -88,9 +88,11 @@ export function saveState(state) {
   }
 }
 
+// Full numbers with commas below a million (so every click is visible),
+// then short forms like 1.25M and 3.4B.
 export function formatNumber(n) {
   const v = Math.floor(n)
-  if (v < 1000) return String(v)
+  if (v < 1_000_000) return v.toLocaleString('en-US')
   const units = ['K', 'M', 'B', 'T', 'Qa', 'Qi']
   let i = -1
   let x = v

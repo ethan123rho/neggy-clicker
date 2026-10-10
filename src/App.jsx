@@ -284,7 +284,7 @@ function Shop({ state, onBuy }) {
                     ×{owned}
                   </span>
                 )}
-                <span className="w-16 text-right">
+                <span className="w-20 text-right">
                   <span className="block font-bold text-amber-700">{formatNumber(cost)}</span>
                   <span className="block text-[10px] uppercase tracking-wide text-stone-500">Neggy</span>
                 </span>
