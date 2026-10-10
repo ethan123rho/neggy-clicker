@@ -323,7 +323,7 @@ function ItemIcon({ item }) {
         src={item.image}
         alt=""
         onError={() => setBroken(true)}
-        className="h-10 w-10 rounded-full object-cover"
+        className="h-10 w-10 object-contain"
       />
     )
   }
