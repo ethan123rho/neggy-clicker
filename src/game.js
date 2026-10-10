@@ -37,6 +37,15 @@ export function itemCost(item, owned) {
   return Math.ceil(item.baseCost * Math.pow(COST_GROWTH, owned))
 }
 
+// Total price of buying `count` more, with each purchase priced at the escalating rate.
+export function bulkCost(item, owned, count) {
+  let total = 0
+  for (let k = 0; k < count; k++) total += itemCost(item, owned + k)
+  return total
+}
+
+export const BULK_AMOUNTS = [10, 50, 100]
+
 export function rebirthMultiplier(state) {
   return 1 + state.rebirths
 }

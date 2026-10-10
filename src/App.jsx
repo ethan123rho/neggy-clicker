@@ -2,7 +2,9 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   NEGGY_FALLBACK,
   NEGGY_IMAGE,
+  BULK_AMOUNTS,
   SHOP_ITEMS,
+  bulkCost,
   formatNumber,
   initialState,
   itemCost,
@@ -65,12 +67,12 @@ export default function App() {
     })
   }, [])
 
-  const buy = useCallback((item) => {
+  const buy = useCallback((item, count = 1) => {
     setState((s) => {
       const owned = s.owned[item.id] || 0
-      const cost = itemCost(item, owned)
+      const cost = bulkCost(item, owned, count)
       if (s.neggys < cost) return s
-      return { ...s, neggys: s.neggys - cost, owned: { ...s.owned, [item.id]: owned + 1 } }
+      return { ...s, neggys: s.neggys - cost, owned: { ...s.owned, [item.id]: owned + count } }
     })
   }, [])
 
@@ -264,11 +266,14 @@ function Shop({ state, onBuy }) {
           const cost = itemCost(item, owned)
           const affordable = state.neggys >= cost
           return (
-            <li key={item.id}>
+            <li
+              key={item.id}
+              className="rounded-xl border border-amber-100 bg-amber-50/60 transition hover:border-amber-300"
+            >
               <button
                 onClick={() => onBuy(item)}
                 disabled={!affordable}
-                className="flex w-full items-center gap-3 rounded-xl border border-amber-100 bg-amber-50/60 p-3 text-left transition enabled:hover:border-amber-300 enabled:hover:bg-amber-100 disabled:opacity-50"
+                className="flex w-full items-center gap-3 rounded-t-xl p-3 text-left transition enabled:hover:bg-amber-100 disabled:opacity-50"
               >
                 <ItemIcon item={item} />
                 <span className="flex-1">
@@ -285,6 +290,23 @@ function Shop({ state, onBuy }) {
                   <span className="block text-[10px] uppercase tracking-wide text-stone-500">Neggy</span>
                 </span>
               </button>
+              <div className="grid grid-cols-3 gap-2 px-3 pb-3">
+                {BULK_AMOUNTS.map((n) => {
+                  const total = bulkCost(item, owned, n)
+                  return (
+                    <button
+                      key={n}
+                      onClick={() => onBuy(item, n)}
+                      disabled={state.neggys < total}
+                      title={`Buy ${n} for ${formatNumber(total)} Neggy`}
+                      className="rounded-lg border border-amber-200 bg-white px-2 py-1 text-xs transition enabled:hover:border-amber-400 enabled:hover:bg-amber-100 disabled:opacity-40"
+                    >
+                      <span className="font-bold text-amber-800">+{n}</span>{' '}
+                      <span className="text-stone-500">{formatNumber(total)}</span>
+                    </button>
+                  )
+                })}
+              </div>
             </li>
           )
         })}
